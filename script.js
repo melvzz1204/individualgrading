@@ -19,10 +19,7 @@ if (!isAdmin && document.getElementById("adminView")) {
 
 const container = document.querySelector(".container");
 
-// Initialize grades storage if it doesn't exist
-if (!localStorage.getItem("grades")) {
-  localStorage.setItem("grades", JSON.stringify([]));
-}
+const API_URL = "http://localhost:5000/grades";
 
 if (isAdmin) {
   // Show admin view only if user is actually admin
@@ -65,82 +62,131 @@ function updateFilters() {
   displayAdminResults(groupFilter, sectionFilter);
 }
 
-// Function to display admin results
+// Fetch and display grades
 function displayAdminResults(filterGroup = "all", filterSection = "all") {
-  if (!isAdmin || sessionStorage.getItem("userType") !== "admin") {
-    console.error("Unauthorized access attempted");
-    return;
-  }
+  if (!isAdmin) return;
 
   const adminResults = document.getElementById("adminResults");
-  const grades = JSON.parse(localStorage.getItem("grades") || "[]");
+  adminResults.innerHTML = "<p>Loading...</p>";
 
-  adminResults.innerHTML = "";
+  fetch(API_URL)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((grades) => {
+      const filteredGrades = grades.filter((grade) => {
+        const matchesGroup =
+          filterGroup === "all" || grade.group === filterGroup;
+        const matchesSection =
+          filterSection === "all" || grade.section === filterSection;
+        return matchesGroup && matchesSection;
+      });
 
-  // Apply both filters
-  const filteredGrades = grades.filter((grade) => {
-    const matchesGroup = filterGroup === "all" || grade.group === filterGroup;
-    const matchesSection =
-      filterSection === "all" || grade.section === filterSection;
-    return matchesGroup && matchesSection;
-  });
+      if (filteredGrades.length === 0) {
+        adminResults.innerHTML = "<p>No grades found for selected filters.</p>";
+        return;
+      }
 
-  if (filteredGrades.length === 0) {
-    adminResults.innerHTML = "<p>No grades found for selected filters.</p>";
-    return;
+      adminResults.innerHTML = "";
+      filteredGrades.forEach((grade) => {
+        const gradeDiv = createGradeElement(grade);
+        adminResults.appendChild(gradeDiv);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching grades:", error);
+      adminResults.innerHTML = "<p>Error loading grades</p>";
+    });
+}
+
+// Submit grades
+document.getElementById("gradingForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  if (isAdmin) return;
+
+  const gradeData = {
+    group: document.getElementById("groupSelect").value,
+    section: sessionStorage.getItem("section"),
+    students: [],
+    comment: document.getElementById("comment").value,
+    submittedBy: sessionStorage.getItem("username"),
+  };
+
+  for (let i = 1; i <= 6; i++) {
+    const name = document.getElementById(`student${i}`).value.trim();
+    const performance = document.getElementById(`performance${i}`).value;
+    if (name) {
+      gradeData.students.push({ name, performance });
+    }
   }
 
-  // Sort grades by section and then by group
-  filteredGrades.sort((a, b) => {
-    if (a.section === b.section) {
-      return a.group.localeCompare(b.group);
-    }
-    return (a.section || "").localeCompare(b.section || "");
-  });
-
-  // Display filtered results
-  filteredGrades.forEach((grade, index) => {
-    const gradeDiv = document.createElement("div");
-    gradeDiv.className = "group-section";
-    gradeDiv.innerHTML = `
-            <div class="group-header">
-                <h3>Group ${grade.group.replace("group", "")} - ${
-      grade.section || "No Section"
-    }</h3>
-                <button class="delete-btn" data-index="${index}">Delete</button>
-            </div>
-            <p class="submitted-by">
-                <strong>Submitted by:</strong> ${grade.submittedBy || "Unknown"}
-                <span class="section-info">(Section: ${
-                  grade.section || "Not specified"
-                })</span>
-            </p>
-            <ul>
-                ${grade.students
-                  .map(
-                    (student) =>
-                      `<li>${student.name} - Performance: ${student.performance}</li>`
-                  )
-                  .join("")}
-            </ul>
-            <p><strong>Comments:</strong> ${grade.comment || "No comments"}</p>
-            <p><strong>Submitted:</strong> ${new Date(
-              grade.timestamp
-            ).toLocaleString()}</p>
-        `;
-    adminResults.appendChild(gradeDiv);
-
-    // Add delete functionality
-    const deleteBtn = gradeDiv.querySelector(".delete-btn");
-    deleteBtn.addEventListener("click", function () {
-      if (confirm("Are you sure you want to delete this grade submission?")) {
-        const grades = JSON.parse(localStorage.getItem("grades") || "[]");
-        grades.splice(index, 1);
-        localStorage.setItem("grades", JSON.stringify(grades));
-        displayAdminResults(filterGroup, filterSection);
-      }
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(gradeData),
+  })
+    .then((response) => response.json())
+    .then(() => {
+      alert("Grade submitted successfully!");
+      this.reset();
+    })
+    .catch((error) => {
+      console.error("Error submitting grade:", error);
+      alert("Error submitting grade");
     });
-  });
+});
+
+// Delete grade
+function deleteGrade(gradeId) {
+  if (!isAdmin) return;
+
+  if (confirm("Are you sure you want to delete this grade?")) {
+    fetch(`${API_URL}/${gradeId}`, { method: "DELETE" })
+      .then(() => {
+        alert("Grade deleted successfully");
+        displayAdminResults();
+      })
+      .catch((error) => {
+        console.error("Error deleting grade:", error);
+        alert("Error deleting grade");
+      });
+  }
+}
+
+// Helper function to create grade element
+function createGradeElement(grade) {
+  const gradeDiv = document.createElement("div");
+  gradeDiv.className = "group-section";
+  gradeDiv.innerHTML = `
+    <div class="group-header">
+      <h3>Group ${grade.group} - ${grade.section || "No Section"}</h3>
+      <button class="delete-btn" onclick="deleteGrade('${
+        grade._id
+      }')">Delete</button>
+    </div>
+    <p class="submitted-by">
+      <strong>Submitted by:</strong> ${grade.submittedBy || "Unknown"}
+      <span class="section-info">(Section: ${
+        grade.section || "Not specified"
+      })</span>
+    </p>
+    <ul>
+      ${grade.students
+        .map(
+          (student) =>
+            `<li>${student.name} - Performance: ${student.performance}</li>`
+        )
+        .join("")}
+    </ul>
+    <p><strong>Comments:</strong> ${grade.comment || "No comments"}</p>
+    <p><strong>Submitted:</strong> ${new Date(
+      grade.timestamp
+    ).toLocaleString()}</p>
+  `;
+  return gradeDiv;
 }
 
 // Add logout button
@@ -152,56 +198,3 @@ logoutBtn.onclick = () => {
   window.location.href = "login.html";
 };
 container.appendChild(logoutBtn);
-
-// Handle form submission
-document.getElementById("gradingForm").addEventListener("submit", function (e) {
-  if (isAdmin) {
-    e.preventDefault();
-    alert("Administrators cannot submit grades");
-    return;
-  }
-
-  e.preventDefault();
-
-  const gradeData = {
-    group: document.getElementById("groupSelect").value,
-    students: [],
-    comment: document.getElementById("comment").value,
-    timestamp: new Date().toISOString(),
-    submittedBy: sessionStorage.getItem("username"), // Add submitter's name
-    section: sessionStorage.getItem("section"), // Add section info
-  };
-
-  // Collect student data
-  for (let i = 1; i <= 6; i++) {
-    const name = document.getElementById(`student${i}`).value.trim();
-    const performance = document.getElementById(`performance${i}`).value;
-    if (name) {
-      gradeData.students.push({ name, performance });
-    }
-  }
-
-  // Save to localStorage
-  const grades = JSON.parse(localStorage.getItem("grades") || "[]");
-  grades.push(gradeData);
-  localStorage.setItem("grades", JSON.stringify(grades));
-
-  // Show submission result
-  document.getElementById("resultGroup").textContent =
-    gradeData.group.charAt(0).toUpperCase() +
-    gradeData.group.slice(1).replace(/([A-Z])/g, " $1");
-
-  const studentsList = document.getElementById("studentsList");
-  studentsList.innerHTML = "";
-  gradeData.students.forEach((student, index) => {
-    const li = document.createElement("li");
-    li.textContent = `Student ${index + 1}: ${student.name} - Performance: ${
-      student.performance.charAt(0).toUpperCase() + student.performance.slice(1)
-    }`;
-    studentsList.appendChild(li);
-  });
-
-  document.getElementById("resultComment").textContent =
-    gradeData.comment || "No comments provided";
-  document.getElementById("result").classList.remove("hidden");
-});
