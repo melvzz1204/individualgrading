@@ -1,0 +1,261 @@
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --background-color: #f9f9f9;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background-color: var(--background-color);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--primary-color);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+h1 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  border-bottom: 3px solid var(--secondary-color);
+  padding-bottom: 1rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e1e1e1;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+}
+
+.students-container {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+}
+
+.students-container h3 {
+  color: var(--secondary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.student-row {
+  display: grid;
+  gap: 1.5rem;
+}
+
+button {
+  width: 100%;
+  padding: 1rem;
+  background: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+#result {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  background: #fff;
+  box-shadow: var(--box-shadow);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+#result.hidden {
+  display: none;
+}
+
+#result:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#studentsList {
+  list-style: none;
+  padding: 0;
+}
+
+#studentsList li {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--secondary-color);
+}
+
+.performance-select {
+  margin-top: 0.5rem;
+  color: var(--primary-color);
+}
+
+.admin-badge {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.logout-btn {
+  background-color: var(--accent-color);
+  margin-top: 1rem;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+.admin-view {
+  padding: 2rem;
+  background: white;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+}
+
+.admin-view.hidden {
+  display: none;
+}
+
+.admin-controls {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+#groupFilter {
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  border: 2px solid #e1e1e1;
+  font-size: 1rem;
+}
+
+#adminResults {
+  display: grid;
+  gap: 1rem;
+}
+
+.group-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--secondary-color);
+}
+
+.group-section h3 {
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+.submitted-by {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.delete-btn {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: auto;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+  transform: none;
+}
+
+.section-info {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.filter-group {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.filter-group select {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .input-group {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

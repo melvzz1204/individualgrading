@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Individual Grading</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Individual Grading</h1>
+      <div id="adminView" class="admin-view hidden" required>
+        <div class="admin-controls">
+          <div class="filter-group">
+            <select id="groupFilter">
+              <option value="all">All Groups</option>
+              <option value="group1">Group 1</option>
+              <option value="group2">Group 2</option>
+              <option value="group3">Group 3</option>
+              <option value="group4">Group 4</option>
+              <option value="group6">Group 6</option>
+              <option value="group7">Group 7</option>
+            </select>
+            <select id="sectionFilter">
+              <option value="all">All Sections</option>
+              <option value="BSIS 2B">BSIS 2B</option>
+              <option value="BSIS 2C">BSIS 2C</option>
+              <option value="BSIT 1E">BSIT 1E</option>
+            </select>
+          </div>
+        </div>
+        <div id="adminResults">
+          <!-- Results will be populated by JavaScript -->
+        </div>
+      </div>
+      <form id="gradingForm">
+        <div class="input-group">
+          <label for="groupSelect">Select Group:</label>
+          <select id="groupSelect" required>
+            <option value="">Choose a group...</option>
+            <option value="group1">Group 1</option>
+            <option value="group2">Group 2</option>
+            <option value="group3">Group 3</option>
+            <option value="group4">Group 4</option>
+            <option value="group6">Group 5</option>
+            <option value="group7">Group 6</option>
+          </select>
+        </div>
+        <div class="students-container">
+          <h3>Members</h3>
+          <div class="student-row">
+            <div class="input-group">
+              <label for="student1">Member 1:</label>
+              <input type="text" id="student1" class="student-input" />
+              <label for="performance1">Performance:</label>
+              <select id="performance1" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="student2">Member 2:</label>
+              <input type="text" id="student2" class="student-input" />
+              <label for="performance2">Performance:</label>
+              <select id="performance2" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="student3">Member 3:</label>
+              <input type="text" id="student3" class="student-input" />
+              <label for="performance3">Performance:</label>
+              <select id="performance3" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="student4">Member 4:</label>
+              <input type="text" id="student4" class="student-input" />
+              <label for="performance4">Performance:</label>
+              <select id="performance4" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="student5">Member 5:</label>
+              <input type="text" id="student5" class="student-input" />
+              <label for="performance5">Performance:</label>
+              <select id="performance5" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="student6">Member 6:</label>
+              <input type="text" id="student6" class="student-input" />
+              <label for="performance6">Performance:</label>
+              <select id="performance6" class="performance-select">
+                <option value="excellent">Excellent</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+                <option value="poor">Poor</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="comment" required>Comments:</label>
+          <textarea
+            id="comment"
+            rows="4"
+            placeholder="Enter your comments here..."
+            required
+          ></textarea>
+        </div>
+        <button type="submit">Submit Grades</button>
+      </form>
+      <div id="result" class="hidden">
+        <h2>Grading Results</h2>
+        <p>Group: <span id="resultGroup"></span></p>
+        <div id="studentResults">
+          <h3>Individual Results:</h3>
+          <ul id="studentsList"></ul>
+        </div>
+        <p>Group Comments: <span id="resultComment"></span></p>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

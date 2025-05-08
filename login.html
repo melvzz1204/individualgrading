@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Individual Grading</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <form id="loginForm" class="login-form">
+        <h1>Login</h1>
+        <div class="user-type">
+          <label>
+            <input type="radio" name="userType" value="student" checked />
+            Student
+          </label>
+          <label>
+            <input type="radio" name="userType" value="admin" />
+            Admin
+          </label>
+        </div>
+        <div class="student-fields">
+          <div class="input-group">
+            <label for="username">Enter your full name</label>
+            <input type="text" id="username" required />
+          </div>
+          <div class="input-group">
+            <select id="section" required>
+              <option value="">Select your section</option>
+              <option value="BSIS 2B">BSIS 2B</option>
+              <option value="BSIS 2C">BSIS 2C</option>
+              <option value="BSIT 1E">BSIT 1E</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-fields hidden">
+          <div class="input-group">
+            <label for="password">Admin Password</label>
+            <input type="password" id="password" />
+          </div>
+        </div>
+        <button type="submit">Enter</button>
+      </form>
+    </div>
+    <script src="login.js"></script>
+  </body>
+</html>
