@@ -37,6 +37,30 @@
           <!-- Results will be populated by JavaScript -->
         </div>
       </div>
+      <div id="studentAccounts" class="admin-view hidden">
+        <h2>Manage Student Accounts</h2>
+        <form id="studentForm">
+          <div class="input-group">
+            <label for="studentUsername">Username:</label>
+            <input type="text" id="studentUsername" required />
+          </div>
+          <div class="input-group">
+            <label for="studentPassword">Password:</label>
+            <input type="password" id="studentPassword" required />
+          </div>
+          <div class="input-group">
+            <label for="studentSection">Section:</label>
+            <select id="studentSection" required>
+              <option value="">Select a section</option>
+              <option value="BSIS 2B">BSIS 2B</option>
+              <option value="BSIS 2C">BSIS 2C</option>
+              <option value="BSIT 1E">BSIT 1E</option>
+            </select>
+          </div>
+          <button type="submit">Create Account</button>
+        </form>
+        <div id="studentList"></div>
+      </div>
       <form id="gradingForm">
         <div class="input-group">
           <label for="groupSelect">Select Group:</label>
@@ -143,5 +167,22 @@
       </div>
     </div>
     <script src="script.js"></script>
+    <script>
+      document
+        .getElementById("studentForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const username = document.getElementById("studentUsername").value;
+          const password = document.getElementById("studentPassword").value;
+          const section = document.getElementById("studentSection").value;
+          createStudentAccount(username, password, section);
+          this.reset();
+        });
+
+      // Load student accounts on page load
+      if (isAdmin) {
+        displayStudentAccounts();
+      }
+    </script>
   </body>
 </html>

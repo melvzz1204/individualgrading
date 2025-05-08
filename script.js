@@ -20,6 +20,7 @@ if (!isAdmin && document.getElementById("adminView")) {
 const container = document.querySelector(".container");
 
 const API_URL = "http://localhost:5000/grades";
+const STUDENT_API_URL = "http://localhost:5000/students";
 
 if (isAdmin) {
   // Show admin view only if user is actually admin
@@ -44,6 +45,9 @@ if (isAdmin) {
     document
       .getElementById("sectionFilter")
       .addEventListener("change", updateFilters);
+
+    // Display student accounts
+    displayStudentAccounts();
   }
 } else {
   // Ensure admin elements are not accessible
@@ -128,14 +132,21 @@ document.getElementById("gradingForm").addEventListener("submit", function (e) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(gradeData),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((error) => {
+          throw new Error(error.error || "Failed to submit grade");
+        });
+      }
+      return response.json();
+    })
     .then(() => {
       alert("Grade submitted successfully!");
       this.reset();
     })
     .catch((error) => {
-      console.error("Error submitting grade:", error);
-      alert("Error submitting grade");
+      console.error("Error submitting grade:", error.message);
+      alert(error.message);
     });
 });
 
@@ -198,3 +209,62 @@ logoutBtn.onclick = () => {
   window.location.href = "login.html";
 };
 container.appendChild(logoutBtn);
+
+// Fetch and display student accounts
+function displayStudentAccounts() {
+  fetch(STUDENT_API_URL)
+    .then((response) => response.json())
+    .then((students) => {
+      const studentList = document.getElementById("studentList");
+      studentList.innerHTML = "";
+
+      students.forEach((student) => {
+        const studentDiv = document.createElement("div");
+        studentDiv.className = "student-account";
+        studentDiv.innerHTML = `
+          <p><strong>Username:</strong> ${student.username}</p>
+          <p><strong>Section:</strong> ${student.section}</p>
+          <button onclick="deleteStudentAccount('${student._id}')">Delete</button>
+        `;
+        studentList.appendChild(studentDiv);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching student accounts:", error);
+    });
+}
+
+// Create a new student account
+function createStudentAccount(username, password, section) {
+  const studentData = { username, password, section };
+
+  fetch(STUDENT_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(studentData),
+  })
+    .then((response) => response.json())
+    .then(() => {
+      alert("Student account created successfully!");
+      displayStudentAccounts();
+    })
+    .catch((error) => {
+      console.error("Error creating student account:", error);
+      alert("Error creating student account");
+    });
+}
+
+// Delete a student account
+function deleteStudentAccount(studentId) {
+  if (confirm("Are you sure you want to delete this student account?")) {
+    fetch(`${STUDENT_API_URL}/${studentId}`, { method: "DELETE" })
+      .then(() => {
+        alert("Student account deleted successfully");
+        displayStudentAccounts();
+      })
+      .catch((error) => {
+        console.error("Error deleting student account:", error);
+        alert("Error deleting student account");
+      });
+  }
+}

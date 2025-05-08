@@ -53,10 +53,13 @@ app.get("/grades", async (req, res) => {
 
 app.post("/grades", async (req, res) => {
   try {
+    console.log("Saving grade:", req.body); // Log the incoming data
     const grade = new Grade(req.body);
     await grade.save();
+    console.log("Grade saved successfully:", grade); // Log the saved grade
     res.status(201).json(grade);
   } catch (err) {
+    console.error("Error saving grade:", err.message);
     res.status(400).json({ error: "Failed to save grade" });
   }
 });
